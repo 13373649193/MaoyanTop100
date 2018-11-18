@@ -60,16 +60,33 @@ def parse_page(html):
         }
 
 
+    # --下面是用正则去解析response--
+    # pattern = '<dd>.*?board-index.*?>(\d+)</i>.*?data-src="(.*?)".*?name"><a' \
+    #           '.*?>(.*?)</a>.*?star">(.*?)</p>.*?releasetime">(.*?)</p>' \
+    #           '.*?integer">(.*?)</i>.*?fraction">(.*?)</i>.*?</dd>'
+    # items = re.findall(pattern, html, re.S)
+    # for item in items:
+    #     yield {
+    #         'maoyan_rank': item[0],
+    #         'maoyan_image': item[1],
+    #         'maoyan_title': item[2],
+    #         'maoyan_star': item[3],
+    #         'maoyan_releasetime': item[4],
+    #         'maoyan_score': item[5] + item[6]
+    #     }
+
 def save_to_mongo(item):
     if collection.insert(item):
         logging.debug('Successful to write data')
     else:
         logging.error('Fail to write data' + item)
 
+
 def schedule(url):
     html = get_page(url)
     for item in parse_page(html):
         save_to_mongo(item)
+
 
 if __name__ == '__main__':
     logging.debug('main begin')
